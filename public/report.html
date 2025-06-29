@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Report</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .report-container {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .report-header h1 {
+            font-size: 28px;
+            color: #007bff;
+            margin: 0;
+        }
+
+        .report-header nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .report-header nav a {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .report-header nav a:hover {
+            background-color: #0056b3;
+        }
+
+        .company-info {
+            margin-bottom: 20px;
+        }
+
+        .company-info h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .company-info p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .company-info p strong {
+            color: #007bff;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .contact-info h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .contact-info p {
+            font-size: 16px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .contact-info p strong {
+            color: #007bff;
+        }
+
+        .contact-info p a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .contact-info p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Logo</div>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="inventory.html">Inventory</a></li>
+            <li><a href="sales.html">Sales</a></li>
+            <li><a href="report.html">Company Report</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header class="report-header">
+            <h1>Company Report</h1>
+            <nav>
+                <a href="home.html">Dashboard</a>
+                <a href="inventory.html">Inventory</a>
+                <a href="sales.html">Sales</a>
+            </nav>
+        </header>
+
+        <div class="report-container">
+            <div class="company-info">
+                <h2>About Our Company</h2>
+                <p><strong>Company Name:</strong> ABC Inventory Management Inc.</p>
+                <p><strong>Address:</strong> 1234 Warehouse Lane, Suite 100, Inventory City, TC 56789</p>
+                <p><strong>Email:</strong> <a href="mailto:contact@abcinventory.com">contact@abcinventory.com</a></p>
+                <p><strong>Phone:</strong> +91 9895888161</p>
+            </div>
+
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <p><strong>Amal Sheik</strong> - HEAD<br>Email: <a href="mailto:amalsheik@gmail.com">amalsheik@gmail.com</a><br>Phone: 7306731189</p>
+                <p><strong>Arjun PK</strong> - Assistant<br>Email: <a href="mailto:arjunpk004@gmail.com">arjunpk004@gmail.com</a><br>Phone: 9895888161</p>
+                <p><strong>Rishon</strong> - Operation Manager<br>Email: <a href="mailto:rishon@gmail.com">Rishon@gmail.com</a><br>Phone: 8281620274</p>
+                <p><strong>Aswin Menon</strong> - Manager<br>Email: <a href="mailto:aswinmenon@com">aswinmen@gmail.com</a><br>Phone: 6238704487</p>
+                <p><strong>Josna Jomon</strong> - MANAGER<br>Email: <a href="mailto:josnajomon9847@gmail.com">josnajomon9847@gmail.com</a><br>Phone: 9778394655</p>
+            </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

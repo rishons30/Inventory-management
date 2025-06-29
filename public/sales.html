@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Logo</div>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="inventory.html">Inventory</a></li>
+            <li><a href="sales.html" class="active">Sales</a></li>
+            <li><a href="report.html">Reports</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Sales Dashboard</h1>
+            <div class="user-info">
+                <a href="index.html">Logout</a>
+            </div>
+        </header>
+
+        <div class="sales-overview">
+            <div class="overview-card">
+                <h3>Total Sales</h3>
+                <p id="totalSales">$0</p>
+            </div>
+            <div class="overview-card">
+                <h3>Monthly Sales</h3>
+                <p id="monthlySales">$0</p>
+            </div>
+            <div class="overview-card">
+                <h3>Sales This Week</h3>
+                <p id="weeklySales">$0</p>
+            </div>
+        </div>
+
+        <div class="charts">
+            <canvas id="salesMonthlyChart"></canvas>
+            <canvas id="salesYearlyChart"></canvas>
+        </div>
+
+        <div class="sales-table">
+            <h2>Sales Records</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Amount</th>
+                        <th>Customer</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sales rows will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="add-sale">
+            <h2>Add New Sale</h2>
+            <form id="addSaleForm">
+                <label for="saleId">Sale ID:</label>
+                <input type="number" id="saleId" required>
+                
+                <label for="saleAmount">Amount:</label>
+                <input type="number" id="saleAmount" required>
+                
+                <label for="saleCustomer">Customer:</label>
+                <input type="text" id="saleCustomer" required>
+                
+                <button type="submit">Add Sale</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const salesMonthlyChartCtx = document.getElementById('salesMonthlyChart').getContext('2d');
+            const salesYearlyChartCtx = document.getElementById('salesYearlyChart').getContext('2d');
+
+            let salesMonthlyChart = new Chart(salesMonthlyChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: [], // Will be updated
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: [], // Will be updated
+                        backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            let salesYearlyChart = new Chart(salesYearlyChartCtx, {
+                type: 'line',
+                data: {
+                    labels: [], // Will be updated
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: [], // Will be updated
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            function updateCharts(sales) {
+                const labels = sales.map(sale => sale.saleId);
+                const data = sales.map(sale => sale.amount);
+
+                salesMonthlyChart.data.labels = labels;
+                salesMonthlyChart.data.datasets[0].data = data;
+                salesMonthlyChart.update();
+            }
+
+            async function fetchSales() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/sales');
+                    const sales = await response.json();
+                    populateTable(sales);
+                    updateCharts(sales);
+
+                    const totalResponse = await fetch('http://localhost:3000/api/sales/totals');
+                    const totals = await totalResponse.json();
+                    
+                    document.getElementById('totalSales').textContent = `$${totals.totalSales}`;
+                    document.getElementById('monthlySales').textContent = `$${totals.monthlySales}`;
+                    document.getElementById('weeklySales').textContent = `$${totals.weeklySales}`;
+                } catch (err) {
+                    console.error('Error fetching sales:', err);
+                }
+            }
+
+            function populateTable(sales) {
+                const tableBody = document.querySelector('.sales-table tbody');
+                tableBody.innerHTML = '';
+
+                sales.forEach(sale => {
+                    const row = document.createElement('tr');
+                    row.dataset.id = sale._id;
+
+                    row.innerHTML = `
+                        <td class="sale-id">${sale.saleId}</td>
+                        <td class="amount">${sale.amount}</td>
+                        <td class="customer">${sale.customer}</td>
+                        <td>
+                            <button class="delete">Delete</button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                attachSaleEventListeners();
+            }
+
+            function attachSaleEventListeners() {
+                const rows = document.querySelectorAll('.sales-table tbody tr');
+                
+                rows.forEach(row => {
+                    const deleteButton = row.querySelector('.delete');
+                    const saleId = row.dataset.id;
+                    
+                    deleteButton.addEventListener('click', async () => {
+                        try {
+                            const response = await fetch(`http://localhost:3000/api/sales/${saleId}`, {
+                                method: 'DELETE'
+                            });
+
+                            if (response.ok) {
+                                row.remove();
+                                fetchSales(); // Refresh data after deletion
+                            } else {
+                                console.error('Error deleting sale:', response.statusText);
+                            }
+                        } catch (err) {
+                            console.error('Error deleting sale:', err);
+                        }
+                    });
+                });
+            }
+
+            const addSaleForm = document.getElementById('addSaleForm');
+            addSaleForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const saleId = document.getElementById('saleId').value;
+                const saleAmount = document.getElementById('saleAmount').value;
+                const saleCustomer = document.getElementById('saleCustomer').value;
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/sales', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            saleId: parseInt(saleId, 10), // Ensure saleId is a number
+                            amount: parseFloat(saleAmount), // Ensure amount is a number
+                            customer: saleCustomer
+                        })
+                    });
+
+                    if (response.ok) {
+                        const newSale = await response.json();
+                        addSaleForm.reset();
+                        fetchSales(); // Refresh data after adding new sale
+                    } else {
+                        console.error('Error adding sale:', response.statusText);
+                    }
+                } catch (err) {
+                    console.error('Error adding sale:', err);
+                }
+            });
+
+            fetchSales(); // Initial data fetch
+        });
+    </script>
+</body>
+</html>
